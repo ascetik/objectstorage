@@ -1,10 +1,27 @@
 <?php
 
+/**
+ * This is part of the Ascetik objectstorage package
+ *
+ * @package    ObjectStorage
+ * @category   Container
+ * @license    https://opensource.org/license/mit/  MIT License
+ * @copyright  Copyright (c) 2023, Vidda
+ * @author     Vidda <vidda@ascetik.fr>
+ */
+
+declare(strict_types=1);
+
 namespace Ascetik\ObjectStorage\Traits;
 
 use Closure;
 use SplObjectStorage;
 
+/**
+ * All read method used by any Box
+ *
+ * @version 1.0.0
+ */
 trait ReadableContainer
 {
     private SplObjectStorage $container;
@@ -103,5 +120,4 @@ trait ReadableContainer
     {
         return $this->container;
     }
-
 }

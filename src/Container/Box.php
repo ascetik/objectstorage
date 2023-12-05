@@ -18,6 +18,9 @@ use Ascetik\ObjectStorage\Traits\ReadableContainer;
 use Closure;
 use SplObjectStorage;
 
+/**
+ * @version 1.0.0
+ */
 class Box implements \Countable,  \IteratorAggregate
 {
     use ReadableContainer;
@@ -88,17 +91,16 @@ class Box implements \Countable,  \IteratorAggregate
             $result = call_user_func($closure, $content);
             $output->push($result);
         }
-
         return $output;
-    }
-
-    public function readonly(): ReadonlyBox
-    {
-        return new ReadonlyBox(($this->container));
     }
 
     public function clear(): void
     {
         $this->container->removeAll($this->container);
+    }
+
+    public function readonly(): ReadonlyBox
+    {
+        return new ReadonlyBox(($this->container));
     }
 }

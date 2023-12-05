@@ -17,6 +17,9 @@ namespace Ascetik\ObjectStorage\Container;
 use Ascetik\ObjectStorage\Traits\ReadableContainer;
 use SplObjectStorage;
 
+/**
+ * @version 1.0.0
+ */
 class ReadonlyBox
 {
     use ReadableContainer;
