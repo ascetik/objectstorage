@@ -7,6 +7,7 @@ namespace Ascetik\Storage\Tests;
 use Ascetik\ObjectStorage\Container\Box;
 use Ascetik\ObjectStorage\Container\ReadonlyBox;
 use Ascetik\ObjectStorage\Tests\Mocks\FakeInstance;
+use Ascetik\ObjectStorage\Tests\Mocks\FakeOffset;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -171,5 +172,20 @@ class BoxTest extends TestCase
     public function testSHouldBeAbleToReturnAREadonlyBox()
     {
         $this->assertInstanceOf(ReadonlyBox::class, $this->storage->readonly());
+    }
+
+    public function testShouldFindAnInstanceUsingItsOffset()
+    {
+        $essai1 = new FakeInstance('test premier');
+        $essai2 = new FakeInstance('essai');
+        $title1 = new FakeOffset('first');
+        $title2 = new FakeOffset('second');
+        $this->storage->push($essai1, $title1);
+        $this->storage->push($essai2, $title2);
+
+        $found = $this->storage->findByOffset(fn(FakeOffset $offset) => $offset->value == 'second');
+        $this->assertSame('essai', $found->name);
+        $notFound = $this->storage->findByOffset(fn(FakeOffset $offset) => $offset->value == 'third');
+        $this->assertNull($notFound);
     }
 }
