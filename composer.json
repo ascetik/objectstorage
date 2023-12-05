@@ -8,7 +8,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Ascetik\\Objectstorage\\": "src/"
+            "Ascetik\\ObjectStorage\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ascetik\\ObjectStorage\\Tests\\": "tests/"
         }
     },
     "authors": [
