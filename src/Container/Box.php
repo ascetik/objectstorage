@@ -14,12 +14,14 @@ declare(strict_types=1);
 
 namespace Ascetik\ObjectStorage\Container;
 
+use Ascetik\ObjectStorage\Traits\ReadableContainer;
 use Closure;
 use SplObjectStorage;
 
 class Box implements \Countable,  \IteratorAggregate
 {
-    private SplObjectStorage $container;
+    use ReadableContainer;
+
 
     public function __construct()
     {
@@ -29,6 +31,19 @@ class Box implements \Countable,  \IteratorAggregate
     public function isEmpty(): bool
     {
         return $this->container->count() == 0;
+    }
+
+    public function push(object $instance, mixed $offset = null): void
+    {
+        $this->container->attach($instance, $offset);
+    }
+
+    public function unshift(object $instance, mixed $offset = null): void
+    {
+        $container = new SplObjectStorage();
+        $container->attach($instance, $offset);
+        $container->addAll($this->container);
+        $this->container = $container;
     }
 
     public function contains(object $instance)
@@ -51,35 +66,46 @@ class Box implements \Countable,  \IteratorAggregate
         return false;
     }
 
-    public function push(object $instance, mixed $offset = null): void
+    public function first(): ?object
     {
-        $this->container->attach($instance, $offset);
-    }
-
-    public function first()
-    {
+        if ($this->isEmpty()) {
+            return null;
+        }
         $this->container->rewind();
         return $this->container->current();
     }
 
-
-    public function last()
+    public function last(): ?object
     {
+        if ($this->isEmpty()) {
+            return null;
+        }
         while ($this->container->valid()) {
             $next = $this->container->current();
             $this->container->next();
         }
         return $next;
     }
-    public function unshift(object $instance, mixed $offset = null): void
+
+    public function shift(): ?object
     {
-        $container = new SplObjectStorage();
-        $container->attach($instance, $offset);
-        $container->addAll($this->container);
-        $this->container = $container;
+        if ($first = $this->first()) {
+            $this->container->detach($first);
+            return $first;
+        }
+        return null;
     }
 
-    public function remove(Closure $callback)
+    public function pop(): ?object
+    {
+        if ($last = $this->last()) {
+            $this->container->detach($last);
+            return $last;
+        }
+        return null;
+    }
+
+    public function remove(Closure $callback): bool
     {
         $content = $this->find($callback);
         if ($content) {
@@ -87,20 +113,6 @@ class Box implements \Countable,  \IteratorAggregate
             return true;
         }
         return false;
-    }
-
-    public function shift(): object
-    {
-        $current = $this->first();
-        $this->container->detach($current);
-        return $current;
-    }
-
-    public function pop()
-    {
-        $next = $this->last();
-        $this->container->detach($next);
-        return $next;
     }
 
     public function find(Closure $closure): ?object
@@ -127,7 +139,7 @@ class Box implements \Countable,  \IteratorAggregate
         return $output;
     }
 
-    public function each(Closure $closure)
+    public function each(Closure $closure): void
     {
         foreach ($this->container as $content) {
             call_user_func($closure, $content);
@@ -145,13 +157,9 @@ class Box implements \Countable,  \IteratorAggregate
         return $output;
     }
 
-    public function toArray(): array
+    public function readonly(): ReadonlyBox
     {
-        $output = [];
-        foreach ($this->container as $content) {
-            $output[] = $content;
-        }
-        return $output;
+        return new ReadonlyBox(($this->container));
     }
 
     public function clear(): void
