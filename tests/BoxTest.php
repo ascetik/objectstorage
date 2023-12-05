@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ascetik\Storage\Tests;
 
 use Ascetik\ObjectStorage\Container\Box;
+use Ascetik\ObjectStorage\Container\ReadonlyBox;
 use Ascetik\ObjectStorage\Tests\Mocks\FakeInstance;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -165,5 +166,10 @@ class BoxTest extends TestCase
         $this->storage->push($essai3);
         $expected = [$essai1, $essai2, $essai3];
         $this->assertSame($expected, $this->storage->toArray());
+    }
+
+    public function testSHouldBeAbleToReturnAREadonlyBox()
+    {
+        $this->assertInstanceOf(ReadonlyBox::class, $this->storage->readonly());
     }
 }
