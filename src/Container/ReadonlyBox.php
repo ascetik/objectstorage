@@ -20,7 +20,7 @@ use SplObjectStorage;
 /**
  * @version 1.0.0
  */
-class ReadonlyBox
+class ReadonlyBox implements \Countable, \IteratorAggregate
 {
     use ReadableContainer;
 
