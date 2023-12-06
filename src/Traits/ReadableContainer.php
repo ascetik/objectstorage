@@ -47,12 +47,7 @@ trait ReadableContainer
 
     public function contains(object $instance)
     {
-        foreach ($this->container as $content) {
-            if ($instance === $content) {
-                return true;
-            }
-        }
-        return false;
+        return $this->container->contains($instance);
     }
 
     public function hasAny(object $instance)
