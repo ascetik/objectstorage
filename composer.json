@@ -1,0 +1,26 @@
+{
+    "name": "ascetik/objectstorage",
+    "description": "Self-made SplObjectStorage extension",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ascetik\\ObjectStorage\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ascetik\\ObjectStorage\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ascetik",
+            "email": "ascetik@free.fr"
+        }
+    ],
+    "require": {}
+}
