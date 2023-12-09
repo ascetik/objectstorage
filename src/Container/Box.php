@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Ascetik\ObjectStorage\Container;
 
+use Ascetik\ObjectStorage\DTO\ItemComparator;
+use Ascetik\ObjectStorage\Enums\BoxSortOrder;
 use Ascetik\ObjectStorage\Traits\ReadableContainer;
 use Closure;
 use SplObjectStorage;
@@ -25,9 +27,9 @@ class Box implements \Countable,  \IteratorAggregate
 {
     use ReadableContainer;
 
-    public function __construct()
-    {
-        $this->container = new SplObjectStorage();
+    public function __construct(
+        private SplObjectStorage $container = new SplObjectStorage()
+    ) {
     }
 
     public function push(object $instance, mixed $offset = null): void
@@ -94,6 +96,54 @@ class Box implements \Countable,  \IteratorAggregate
         return $output;
     }
 
+    public function sort(callable $sorting, BoxSortOrder $order = BoxSortOrder::ASC):void
+    {
+
+        if ($this->container->count() == 0) {
+            return;
+        }
+
+        $pivot = $this->last();
+        $tail = new self();
+        $head = new self();
+
+        $comparator = new ItemComparator($sorting, $order);
+
+        foreach ($this->container as $content) {
+            if ($content !== $pivot) {
+                $result = $comparator->compare($pivot, $content);
+                $store = $result->reversed() ? $head : $tail;
+                $store->push($content, $this->container->offsetGet($content));
+            }
+        }
+
+        $tail->sort($sorting, $order);
+        $head->sort($sorting, $order);
+        $tail->push($pivot, $this->container->offsetGet($pivot));
+        $tail->union($head);
+
+        $this->clear();
+        $this->union($tail);
+    }
+
+    public function atKey(int $key)
+    {
+        if ($key < $this->container->count() - 1) {
+            $this->container->rewind();
+            foreach ($this->container as $content) {
+                if ($this->container->key() == $key) {
+                    return $this->container->current();
+                }
+            }
+        }
+        return null;
+    }
+
+    public function union(self $box)
+    {
+        $this->container->addAll($box->container);
+    }
+
     public function clear(): void
     {
         $this->container->removeAll($this->container);
@@ -101,6 +151,6 @@ class Box implements \Countable,  \IteratorAggregate
 
     public function readonly(): ReadonlyBox
     {
-        return new ReadonlyBox(($this->container));
+        return new ReadonlyBox($this->container);
     }
 }
