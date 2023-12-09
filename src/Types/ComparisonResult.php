@@ -14,16 +14,29 @@ declare(strict_types=1);
 
 namespace Ascetik\ObjectStorage\Types;
 
+use Ascetik\ObjectStorage\Enums\BoxSortOrder;
+use Ascetik\ObjectStorage\Values\AscendingResult;
+use Ascetik\ObjectStorage\Values\DescendingResult;
+use Exception;
+
 /**
  * @abstract
  * @version 1.0.0
  */
 abstract class ComparisonResult
 {
-    public function __construct(
-        protected int $result,
-    ) {
+    public function __construct(protected readonly int $result)
+    {
     }
 
     abstract public function reversed(): bool;
+
+    public static function create(BoxSortOrder $order, int $difference): self
+    {
+        return match ($order) {
+            BoxSortOrder::ASC => new AscendingResult($difference),
+            BoxSortOrder::DESC => new DescendingResult($difference),
+            default => throw new Exception('unhandled order')
+        };
+    }
 }

@@ -3,6 +3,7 @@
 namespace Ascetik\ObjectStorage\Tests;
 
 use Ascetik\ObjectStorage\Enums\BoxSortOrder;
+use Ascetik\ObjectStorage\Types\ComparisonResult;
 use Ascetik\ObjectStorage\Values\AscendingResult;
 use Ascetik\ObjectStorage\Values\DescendingResult;
 use PHPUnit\Framework\TestCase;
@@ -21,11 +22,11 @@ class BoxSortingTest extends TestCase
         $this->assertFalse($result->reversed());
     }
 
-    public function testOrderEnumResult()
+    public function testComparisonResultFactory()
     {
         $asc = BoxSortOrder::ASC;
-        $this->assertInstanceOf(AscendingResult::class, $asc->result(0));
+        $this->assertInstanceOf(AscendingResult::class, ComparisonResult::create($asc, 0));
         $desc = BoxSortOrder::DESC;
-        $this->assertInstanceOf(DescendingResult::class, $desc->result(1));
+        $this->assertInstanceOf(DescendingResult::class, ComparisonResult::create($desc, 0));
     }
 }
