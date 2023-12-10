@@ -74,6 +74,7 @@ trait ReadableContainer
         if ($this->isEmpty()) {
             return null;
         }
+        $this->container->rewind();
         while ($this->container->valid()) {
             $next = $this->container->current();
             $this->container->next();

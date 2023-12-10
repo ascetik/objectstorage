@@ -9,6 +9,7 @@
     <testsuites>
         <testsuite name="Storage Tests">
             <file>tests/BoxTest.php</file>
+            <file>tests/BoxSortingTest.php</file>
         </testsuite>
     </testsuites>
     <php>
