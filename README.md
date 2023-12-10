@@ -9,7 +9,7 @@ I tried to use the php DS package but came back to the enhancement of this prese
 
 ## Release notes
 
-> version 0.2.0
+> version 0.2.1
 
 - Sortable box : Ability to sort a box in ascending or descending order, using adapted callable.
 
