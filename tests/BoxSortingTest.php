@@ -7,8 +7,8 @@ use Ascetik\ObjectStorage\DTO\ItemComparator;
 use Ascetik\ObjectStorage\Enums\BoxSortOrder;
 use Ascetik\ObjectStorage\Tests\Mocks\Number;
 use Ascetik\ObjectStorage\Types\ComparisonResult;
-use Ascetik\ObjectStorage\Values\AscendingResult;
-use Ascetik\ObjectStorage\Values\DescendingResult;
+use Ascetik\ObjectStorage\Results\AscendingResult;
+use Ascetik\ObjectStorage\Results\DescendingResult;
 use PHPUnit\Framework\TestCase;
 
 class BoxSortingTest extends TestCase

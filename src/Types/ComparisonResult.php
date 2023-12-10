@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Ascetik\ObjectStorage\Types;
 
 use Ascetik\ObjectStorage\Enums\BoxSortOrder;
-use Ascetik\ObjectStorage\Values\AscendingResult;
-use Ascetik\ObjectStorage\Values\DescendingResult;
+use Ascetik\ObjectStorage\Results\AscendingResult;
+use Ascetik\ObjectStorage\Results\DescendingResult;
 use Exception;
 
 /**

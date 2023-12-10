@@ -1,6 +1,6 @@
 <?php
 
-namespace Ascetik\ObjectStorage\Values;
+namespace Ascetik\ObjectStorage\Results;
 
 use Ascetik\ObjectStorage\Types\ComparisonResult;
 
