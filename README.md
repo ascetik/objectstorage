@@ -37,7 +37,7 @@ Methods available :
 **Box**::pop(): *?object*                           - Remove and return the last element
 **Box**::push(*object*, *mixed*): *void*            - add content at the top of the storage
 **Box**::readonly(): *ReadonlyBox*                  - return a readonly Box
-**Box**::remove(*Closure*): *bool*                  - try to remove the element matching closure result. Return true if any removed, false otherwise
+**Box**::remove(*Closure*): *bool*                  - Remove filtered element if any and return true on success, false otherwise
 **Box**::sort(*callable*, *?BoxSortOrder*): *void*  - sort the box using given algorithm, ASC default order
 **Box**::sortReverse(*callable*): *void*            - sort the box using given algorithm, DESC order
 **Box**::shift(): *?object*                         - Remove and return the first element
