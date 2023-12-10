@@ -2,6 +2,7 @@
 
 namespace Ascetik\ObjectStorage\Tests;
 
+use Ascetik\ObjectStorage\Container\Box;
 use Ascetik\ObjectStorage\DTO\ItemComparator;
 use Ascetik\ObjectStorage\Enums\BoxSortOrder;
 use Ascetik\ObjectStorage\Tests\Mocks\Number;
@@ -49,4 +50,35 @@ class BoxSortingTest extends TestCase
         $comparator = new ItemComparator($sorting, BoxSortOrder::DESC);
         $this->assertFalse($comparator->compare($a, $b)->reversed());
     }
+
+    public function testAscedentSorting()
+    {
+        $box = new Box();
+        $range = [3, 1, 4, 5, 2];
+        foreach ($range as $number) {
+            $box->push(new Number($number));
+        }
+        $this->assertSame(3, $box->first()->value);
+        $this->assertSame(2, $box->last()->value);
+        $box->sort(function (Number $a, Number $b) {
+            return $a->value - $b->value;
+        });
+        $this->assertSame(1, $box->first()->value);
+        $this->assertSame(5, $box->last()->value);
+    }
+
+    public function testDecedentSorting()
+    {
+        $box = new Box();
+        $range = [3, 1, 4, 5, 2];
+        foreach ($range as $number) {
+            $box->push(new Number($number));
+        }
+        $box->sortReverse(function (Number $a, Number $b) {
+            return $a->value - $b->value;
+        });
+        $this->assertSame(5, $box->first()->value);
+        $this->assertSame(1, $box->last()->value);
+    }
+
 }
