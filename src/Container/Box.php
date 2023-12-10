@@ -126,6 +126,11 @@ class Box implements \Countable,  \IteratorAggregate
         $this->union($tail);
     }
 
+    public function sortReverse(callable $sorting)
+    {
+        $this->sort($sorting,BoxSortOrder::DESC);
+    }
+
     public function atKey(int $key)
     {
         if ($key < $this->container->count() - 1) {
