@@ -1,15 +1,5 @@
 <?php
 
-/**
- * This is part of the Ascetik objectstorage package
- *
- * @package    ObjectStorage
- * @category   Container
- * @license    https://opensource.org/license/mit/  MIT License
- * @copyright  Copyright (c) 2023, Vidda
- * @author     Vidda <vidda@ascetik.fr>
- */
-
 declare(strict_types=1);
 
 namespace Ascetik\ObjectStorage\Traits;
@@ -17,27 +7,18 @@ namespace Ascetik\ObjectStorage\Traits;
 use Closure;
 use SplObjectStorage;
 
-/**
- * All read method used by any Box
- * 
- * Next versions will use a core package using common tools
- *
- * @deprecated
- * @version 1.0.0
- */
-trait ReadableContainer
+trait ReadableBox
 {
     private SplObjectStorage $container;
 
-    abstract public static function toArray(): array;
-    // public function toArray(): array
-    // {
-    //     $output = [];
-    //     foreach ($this->container as $content) {
-    //         $output[] = $content;
-    //     }
-    //     return $output;
-    // }
+    public function toArray(): array
+    {
+        $output = [];
+        foreach ($this->container as $content) {
+            $output[] = $content;
+        }
+        return $output;
+    }
 
     public function count(): int
     {
@@ -120,4 +101,5 @@ trait ReadableContainer
     {
         return $this->container;
     }
+
 }
