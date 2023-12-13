@@ -16,7 +16,7 @@ namespace Ascetik\ObjectStorage\Container;
 
 use Ascetik\ObjectStorage\DTO\ItemComparator;
 use Ascetik\ObjectStorage\Enums\BoxSortOrder;
-use Ascetik\ObjectStorage\Traits\ReadableContainer;
+use Ascetik\ObjectStorage\Traits\ReadableBox;
 use Closure;
 use SplObjectStorage;
 
@@ -25,7 +25,7 @@ use SplObjectStorage;
  */
 class Box implements \Countable,  \IteratorAggregate
 {
-    use ReadableContainer;
+    use ReadableBox;
 
     public function __construct(
         private SplObjectStorage $container = new SplObjectStorage()
@@ -96,7 +96,7 @@ class Box implements \Countable,  \IteratorAggregate
         return $output;
     }
 
-    public function sort(callable $sorting, BoxSortOrder $order = BoxSortOrder::ASC):void
+    public function sort(callable $sorting, BoxSortOrder $order = BoxSortOrder::ASC): void
     {
 
         if ($this->container->count() == 0) {
@@ -128,7 +128,7 @@ class Box implements \Countable,  \IteratorAggregate
 
     public function sortReverse(callable $sorting)
     {
-        $this->sort($sorting,BoxSortOrder::DESC);
+        $this->sort($sorting, BoxSortOrder::DESC);
     }
 
     public function atKey(int $key)
@@ -140,6 +140,21 @@ class Box implements \Countable,  \IteratorAggregate
                     return $this->container->current();
                 }
             }
+        }
+        return null;
+    }
+
+    public function associate(object $reference, mixed $offset)
+    {
+        if ($this->container->contains($reference)) {
+            $this->container->offsetSet($reference, $offset);
+        }
+    }
+
+    public function valueOf(object $reference): mixed
+    {
+        if ($this->container->contains($reference)) {
+            return $this->container->offsetGet($reference);
         }
         return null;
     }
@@ -158,4 +173,5 @@ class Box implements \Countable,  \IteratorAggregate
     {
         return new ReadonlyBox($this->container);
     }
+    
 }
