@@ -188,4 +188,23 @@ class BoxTest extends TestCase
         $notFound = $this->storage->findByOffset(fn(FakeOffset $offset) => $offset->value == 'third');
         $this->assertNull($notFound);
     }
+
+    public function testShouldBeAbleToSetAnOffsetToAnElement()
+    {
+        $essai1 = new FakeInstance('test premier');
+        $this->storage->push($essai1);
+       $title1 = new FakeOffset('first');
+        $this->storage->associate($essai1, $title1);
+        $found = $this->storage->findByOffset(fn(FakeOffset $offset) => $offset->value == 'first');
+        $this->assertSame('test premier', $found->name);
+    }
+
+    public function testShouldBeAbleToRetrieveAnOffsetFromABox()
+    {
+        $essai1 = new FakeInstance('test premier');
+        $title1 = new FakeOffset('first');
+        $this->storage->push($essai1, $title1);
+        $result = $this->storage->valueOf($essai1);
+        $this->assertSame($title1, $result);
+    }
 }

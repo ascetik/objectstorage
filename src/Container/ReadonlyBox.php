@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Ascetik\ObjectStorage\Container;
 
-use Ascetik\ObjectStorage\Traits\ReadableContainer;
+use Ascetik\ObjectStorage\Traits\ReadableBox;
 use SplObjectStorage;
 
 /**
@@ -22,9 +22,10 @@ use SplObjectStorage;
  */
 class ReadonlyBox implements \Countable, \IteratorAggregate
 {
-    use ReadableContainer;
+    use ReadableBox;
 
     public function __construct(private SplObjectStorage $container)
     {
     }
+
 }

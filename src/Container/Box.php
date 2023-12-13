@@ -27,6 +27,9 @@ class Box implements \Countable,  \IteratorAggregate
 {
     use ReadableBox;
 
+    private const IGNORE_MISSING = false;
+    private const APPEND_MISSING = true;
+
     public function __construct(
         private SplObjectStorage $container = new SplObjectStorage()
     ) {
@@ -144,10 +147,14 @@ class Box implements \Countable,  \IteratorAggregate
         return null;
     }
 
-    public function associate(object $reference, mixed $offset)
+    public function associate(object $reference, mixed $offset, bool $append = self::IGNORE_MISSING)
     {
         if ($this->container->contains($reference)) {
             $this->container->offsetSet($reference, $offset);
+            return;
+        } 
+        if ($append) {
+            $this->container->attach($reference, $offset);
         }
     }
 
@@ -173,5 +180,4 @@ class Box implements \Countable,  \IteratorAggregate
     {
         return new ReadonlyBox($this->container);
     }
-    
 }
