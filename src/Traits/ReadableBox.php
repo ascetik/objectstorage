@@ -95,7 +95,17 @@ trait ReadableBox
 
     public function getIterator(): SplObjectStorage
     {
-        return $this->container;
+        $container = new SplObjectStorage();
+        $container->addAll($this->container);
+        return $container;
+    }
+
+    public function valueOf(object $reference): mixed
+    {
+        if ($this->container->contains($reference)) {
+            return $this->container->offsetGet($reference);
+        }
+        return null;
     }
 
 }
