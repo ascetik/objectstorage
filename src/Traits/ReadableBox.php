@@ -13,11 +13,7 @@ trait ReadableBox
 
     public function toArray(): array
     {
-        $output = [];
-        foreach ($this->container as $content) {
-            $output[] = $content;
-        }
-        return $output;
+        return iterator_to_array($this->container);
     }
 
     public function count(): int
