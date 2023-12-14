@@ -9,9 +9,9 @@ I tried to use the php DS package but came back to the enhancement of this prese
 
 ## Release notes
 
-> version 0.2.1
+> version 0.3.0
 
-- Sortable box : Ability to sort a box in ascending or descending order, using adapted callable.
+- Offset read/write access
 
 ## Implementations
 
@@ -90,18 +90,29 @@ $class2 = new MyClass(2);
 $class3 = new MyClass(3);
 $box->push($class2, 'offset2'); // registering class2 with an offset as Box head
 $box->unshift($class1, 'offset1'); // registering class2 with an offset as Box tail
+
 $box->associate($class1, 'new offset'); // changing class1 offset
+
 $box->associate($class2, null); // removing class2 offset
-$box->associate($class3,'offset3', $box::IGNORE_MISSING); // $class3 not registered, no action (default behavior)
-$box->associate($class3,'offset3', $box::APPEND_MISSING); // $class3 pushed in Box with its offset
-$box->associate($class4,'offset3', $box::PREPEND_MISSING); // $class4 added as Box tail with its offset
+
+$box->associate($class3, 'offset3', $box::IGNORE_ON_MISSING); // $class3 not registered, no action (default behavior)
+
+$box->associate($class3, 'offset3', $box::APPEND_ON_MISSING); // $class3 pushed in Box with its offset
+
+$box->associate($class4, 'offset4', $box::PREPEND_ON_MISSING); // $class4 added as Box tail with its offset
 
 ```
 
-## Next Features
+> The _associate_ method is not available with **ReadonlyBox**.
 
-The Box will be enhanced if needed.
-It think i should do something to work easily with the offset of an element and be able to sort the box using those offsets...
+To retrieve the offset of a registered object :
 
-I don't know if i'll do the same thing for other Spl Collection handlers : LinkedList, Queue...
-Existing Spl implementation are too imprecise and inconsistent. But most of the time, **Box** seems to be enough for different operations.
+```php
+// from last example
+$offset1 = $box->valueOf($class1); // 'new offset' 
+
+$offset2 = $box->valueOf($class2); // null 
+
+$offset3 = $box->valueOf(new MyClass(4)); // null, unregistered object
+
+```

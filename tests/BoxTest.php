@@ -223,9 +223,23 @@ class BoxTest extends TestCase
         $title1 = new FakeOffset('first offset');
         $title2 = new FakeOffset('second offset');
         $this->storage->push($essai1, $title1);
-        $this->storage->associate($essai2, $title2, $this->storage::APPEND_MISSING);
+        $this->storage->associate($essai2, $title2, $this->storage::APPEND_ON_MISSING);
         $last = $this->storage->last();
         $this->assertSame($last, $essai2);
         $this->assertSame('second offset',$this->storage->valueOf($last)->value);
     }
+
+    public function testAssociatePrependMode()
+    {
+        $essai1 = new FakeInstance('first test');
+        $essai2 = new FakeInstance('second test');
+        $title1 = new FakeOffset('first offset');
+        $title2 = new FakeOffset('second offset');
+        $this->storage->push($essai1, $title1);
+        $this->storage->associate($essai2, $title2, $this->storage::PREPEND_ON_MISSING);
+        $first = $this->storage->first();
+        $this->assertSame($first, $essai2);
+        $this->assertSame('second offset',$this->storage->valueOf($first)->value);
+    }
+
 }
