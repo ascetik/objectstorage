@@ -183,9 +183,63 @@ class BoxTest extends TestCase
         $this->storage->push($essai1, $title1);
         $this->storage->push($essai2, $title2);
 
-        $found = $this->storage->findByOffset(fn(FakeOffset $offset) => $offset->value == 'second');
+        $found = $this->storage->findByOffset(fn (FakeOffset $offset) => $offset->value == 'second');
         $this->assertSame('essai', $found->name);
-        $notFound = $this->storage->findByOffset(fn(FakeOffset $offset) => $offset->value == 'third');
+        $notFound = $this->storage->findByOffset(fn (FakeOffset $offset) => $offset->value == 'third');
         $this->assertNull($notFound);
     }
+
+    public function testShouldBeAbleToSetAnOffsetToAnElement()
+    {
+        $essai1 = new FakeInstance('test premier');
+        $this->storage->push($essai1);
+        $title1 = new FakeOffset('first');
+        $this->storage->associate($essai1, $title1);
+        $found = $this->storage->findByOffset(fn (FakeOffset $offset) => $offset->value == 'first');
+        $this->assertSame('test premier', $found->name);
+    }
+
+    public function testShouldBeAbleToRetrieveAnOffsetFromABox()
+    {
+        $essai1 = new FakeInstance('test premier');
+        $title1 = new FakeOffset('first');
+        $this->storage->push($essai1, $title1);
+        $result = $this->storage->valueOf($essai1);
+        $this->assertSame($title1, $result);
+    }
+
+    public function testAssociateIgnoreMode()
+    {
+        $essai1 = new FakeInstance('test premier');
+        // $this->storage->push($essai1);
+        $title1 = new FakeOffset('first');
+        $this->storage->associate($essai1, $title1);
+        $this->assertEmpty($this->storage);
+    }
+    public function testAssociateAppendMode()
+    {
+        $essai1 = new FakeInstance('first test');
+        $essai2 = new FakeInstance('second test');
+        $title1 = new FakeOffset('first offset');
+        $title2 = new FakeOffset('second offset');
+        $this->storage->push($essai1, $title1);
+        $this->storage->associate($essai2, $title2, $this->storage::APPEND_ON_MISSING);
+        $last = $this->storage->last();
+        $this->assertSame($last, $essai2);
+        $this->assertSame('second offset',$this->storage->valueOf($last)->value);
+    }
+
+    public function testAssociatePrependMode()
+    {
+        $essai1 = new FakeInstance('first test');
+        $essai2 = new FakeInstance('second test');
+        $title1 = new FakeOffset('first offset');
+        $title2 = new FakeOffset('second offset');
+        $this->storage->push($essai1, $title1);
+        $this->storage->associate($essai2, $title2, $this->storage::PREPEND_ON_MISSING);
+        $first = $this->storage->first();
+        $this->assertSame($first, $essai2);
+        $this->assertSame('second offset',$this->storage->valueOf($first)->value);
+    }
+
 }

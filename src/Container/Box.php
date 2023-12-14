@@ -16,7 +16,7 @@ namespace Ascetik\ObjectStorage\Container;
 
 use Ascetik\ObjectStorage\DTO\ItemComparator;
 use Ascetik\ObjectStorage\Enums\BoxSortOrder;
-use Ascetik\ObjectStorage\Traits\ReadableContainer;
+use Ascetik\ObjectStorage\Traits\ReadableBox;
 use Closure;
 use SplObjectStorage;
 
@@ -25,7 +25,11 @@ use SplObjectStorage;
  */
 class Box implements \Countable,  \IteratorAggregate
 {
-    use ReadableContainer;
+    use ReadableBox;
+
+    public const IGNORE_ON_MISSING = 0;
+    public const APPEND_ON_MISSING = 1;
+    public const PREPEND_ON_MISSING = 2;
 
     public function __construct(
         private SplObjectStorage $container = new SplObjectStorage()
@@ -96,7 +100,7 @@ class Box implements \Countable,  \IteratorAggregate
         return $output;
     }
 
-    public function sort(callable $sorting, BoxSortOrder $order = BoxSortOrder::ASC):void
+    public function sort(callable $sorting, BoxSortOrder $order = BoxSortOrder::ASC): void
     {
 
         if ($this->container->count() == 0) {
@@ -128,7 +132,7 @@ class Box implements \Countable,  \IteratorAggregate
 
     public function sortReverse(callable $sorting)
     {
-        $this->sort($sorting,BoxSortOrder::DESC);
+        $this->sort($sorting, BoxSortOrder::DESC);
     }
 
     public function atKey(int $key)
@@ -142,6 +146,19 @@ class Box implements \Countable,  \IteratorAggregate
             }
         }
         return null;
+    }
+
+    public function associate(object $reference, mixed $offset, int $append = self::IGNORE_ON_MISSING)
+    {
+        if ($this->container->contains($reference)) {
+            $this->container->offsetSet($reference, $offset);
+            return;
+        }
+        match ($append) {
+            self::APPEND_ON_MISSING => $this->push($reference, $offset),
+            self::PREPEND_ON_MISSING => $this->unshift($reference, $offset),
+            default => null
+        };
     }
 
     public function union(self $box)
