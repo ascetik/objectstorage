@@ -9,9 +9,9 @@ I tried to use the php DS package but came back to the enhancement of this prese
 
 ## Release notes
 
-> version 0.2.1
+> version 0.3.0
 
-- Sortable box : Ability to sort a box in ascending or descending order, using adapted callable.
+- Offset read/write access
 
 ## Implementations
 
@@ -22,6 +22,7 @@ It provides easy ways to add content at the top or the bottom of the container, 
 
 Methods available :
 
+- **Box**::associate(_object_, _mixed_, _?int_): _void_ - add or replace the offset of given object
 - **Box**::clear(): _void_ - remove all content
 - **Box**::contains(_object_): _bool_ - Check the existence of an instance (strict comparison)
 - **Box**::count(): _int_ - return the number of items
@@ -42,6 +43,7 @@ Methods available :
 - **Box**::sortReverse(_callable_): _void_ - sort the box using given algorithm, DESC order
 - **Box**::shift(): _?object_ - Remove and return the first element
 - **Box**::unshift(_object_, _mixed_): _void_ - add content at the tail of the storage
+- **Box**::valueOf(_object_): _mixed_ - get the offset associated to the given object if present, null otherwise
 
 ### ReadonlyBox
 
@@ -59,6 +61,7 @@ Methods available :
 - **Box**::isEmpty(): _bool_ - check if Box is empty
 - **Box**::last(): _?object_ - Return the last stored element
 - **Box**::map(_Closure_): _self_ - return a new Box containing instances returned by Closure
+- **Box**::valueOf(_object_): _mixed_ - get the offset associated to the given object if present, null otherwise
 
 ## Sorting
 
@@ -67,10 +70,49 @@ A **Box** is sortable but needs an algorithm to work with the instances register
 This algorithm takes 2 arguments : The current Box value and the next one.
 It returns an integer as the result of the comparison between those values, just like _usort()_ with instances.
 
-## Next Features
+## Offset access
 
-The Box will be enhanced if needed.
-It think i should do something to work easily with the offset of an element and be able to sort the box using those offsets...
+The box instance provides methods to access the offset of all its content.
 
-I don't know if i'll do the same thing for other Spl Collection handlers : LinkedList, Queue...
-Existing Spl implementation are too imprecise and inconsistent. But most of the time, **Box** seems to be enough for different operations.
+Methods _push_ and _unshift_ accept a first parameter that is the object to store, and a second nullable parameter for the offset.
+However, it is still possible to add or change the offset of a value during runtime by using the _associate_ method.
+
+It accepts 3 parameters :
+
+- the object that MAY be registered by the Box
+- the value to add/modify/remove as offset
+- an optionnal boolean value, default set to false, to force pushing given object and associated offset in the Box :
+
+```php
+$box = new Box();
+$class1 = new MyClass(1);
+$class2 = new MyClass(2);
+$class3 = new MyClass(3);
+$box->push($class2, 'offset2'); // registering class2 with an offset as Box head
+$box->unshift($class1, 'offset1'); // registering class2 with an offset as Box tail
+
+$box->associate($class1, 'new offset'); // changing class1 offset
+
+$box->associate($class2, null); // removing class2 offset
+
+$box->associate($class3, 'offset3', $box::IGNORE_ON_MISSING); // $class3 not registered, no action (default behavior)
+
+$box->associate($class3, 'offset3', $box::APPEND_ON_MISSING); // $class3 pushed in Box with its offset
+
+$box->associate($class4, 'offset4', $box::PREPEND_ON_MISSING); // $class4 added as Box tail with its offset
+
+```
+
+> The _associate_ method is not available with **ReadonlyBox**.
+
+To retrieve the offset of a registered object :
+
+```php
+// from last example
+$offset1 = $box->valueOf($class1); // 'new offset' 
+
+$offset2 = $box->valueOf($class2); // null 
+
+$offset3 = $box->valueOf(new MyClass(4)); // null, unregistered object
+
+```
